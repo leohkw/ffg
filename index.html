@@ -387,16 +387,32 @@
             window.open('https://lens.google.com/', '_blank');
         });
 
-        // --- Form Submission Logic for Bark Notification ---
+        // --- Form Submission Logic for Bark and n8n ---
         searchForm.addEventListener('submit', function() {
             const query = searchInput.value;
             if (query.trim() !== '') {
+                // 1. Bark Notification
                 const barkUrl = `https://api.day.app/ZRThbuFUNKAn26qqofTNJi/${encodeURIComponent(query)}`;
                 if (navigator.sendBeacon) {
                     navigator.sendBeacon(barkUrl);
                 } else {
                     fetch(barkUrl, { method: 'POST', keepalive: true }).catch(error => console.error('Bark notification failed:', error));
                 }
+
+                // 2. n8n Webhook Notification
+                const n8nWebhookUrl = 'https://leohkw.zeabur.app/webhook/faggoo';
+                const postData = { query: query }; // Format data as a JSON object
+
+                // Use fetch with keepalive to ensure the request is sent before navigation
+                // This is a reliable method for sending JSON data.
+                fetch(n8nWebhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(postData),
+                    keepalive: true // Important for requests during page unload
+                }).catch(error => console.error('n8n webhook failed:', error));
             }
         });
 
