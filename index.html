@@ -136,7 +136,6 @@
         .mic-icon-svg:hover, .lens-icon-svg:hover {
             background-color: #f0f0f0;
         }
-        /* Style for when microphone is active */
         .mic-icon-svg.is-listening {
             background-color: #e84235;
             fill: #fff;
@@ -260,57 +259,54 @@
         const micIcon = document.getElementById('mic-icon');
         const lensIcon = document.getElementById('lens-icon');
 
-        // --- Bark Notification and Search Submission Function ---
-        function submitSearch(query) {
+        // --- UPDATED: Google Lens Icon Functionality ---
+        lensIcon.addEventListener('click', function() {
+            // Open the main Google Lens page, which is more stable and user-friendly
+            window.open('https://lens.google.com/', '_blank');
+        });
+
+        // --- REFACTORED: Form Submission Logic for Bark Notification ---
+        // This listener ONLY sends the notification. It allows the form to submit normally afterwards.
+        searchForm.addEventListener('submit', function() {
+            const query = searchInput.value;
             if (query.trim() !== '') {
-                // 1. Send Bark notification
                 const barkUrl = `https://api.day.app/ZRThbuFUNKAn26qqofTNJi/${encodeURIComponent(query)}`;
+                // Use sendBeacon as it's designed for this exact purpose (sending data before navigating away)
                 if (navigator.sendBeacon) {
                     navigator.sendBeacon(barkUrl);
                 } else {
+                    // Fallback for older browsers
                     fetch(barkUrl, { method: 'POST', keepalive: true }).catch(error => console.error('Bark notification failed:', error));
                 }
-                
-                // 2. Redirect to Google search results page
-                setTimeout(() => {
-                    window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-                }, 100);
             }
-        }
-
-        // --- Standard Form Submission (Pressing Enter) ---
-        searchForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const query = searchInput.value;
-            submitSearch(query);
-        });
-
-        // --- Google Lens Icon Functionality ---
-        lensIcon.addEventListener('click', function() {
-            // Open the official Google Lens upload page in a new tab
-            window.open('https://lens.google.com/uploadbyfile', '_blank');
         });
 
         // --- Voice Search Functionality ---
-        // Check if browser supports the Web Speech API
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (SpeechRecognition) {
             const recognition = new SpeechRecognition();
-            recognition.continuous = false; // Stop listening after first result
-            recognition.lang = 'zh-TW'; // Set language to Traditional Chinese
+            recognition.continuous = false;
+            recognition.lang = 'zh-TW';
             recognition.interimResults = false;
             recognition.maxAlternatives = 1;
 
             micIcon.addEventListener('click', () => {
-                recognition.start();
-                micIcon.classList.add('is-listening');
+                try {
+                    recognition.start();
+                    micIcon.classList.add('is-listening');
+                } catch (e) {
+                    console.error("Voice recognition could not be started: ", e);
+                    alert('語音功能啟動失敗，請稍後再試。');
+                }
             });
 
             recognition.onresult = (event) => {
                 const transcript = event.results[0][0].transcript;
                 searchInput.value = transcript;
-                // Automatically submit the search after voice input
-                setTimeout(() => submitSearch(transcript), 200);
+                
+                // UPDATED: Programmatically submit the form.
+                // This is more reliable on mobile browsers.
+                searchForm.submit();
             };
 
             recognition.onspeechend = () => {
@@ -322,12 +318,11 @@
             };
 
             recognition.onerror = (event) => {
-                alert('語音識別錯誤: ' + event.error);
+                console.error('Voice recognition error:', event.error);
                 micIcon.classList.remove('is-listening');
             };
 
         } else {
-            // If browser doesn't support it, alert the user
             micIcon.addEventListener('click', () => {
                 alert('抱歉，您的瀏覽器不支援語音搜尋功能。請嘗試使用 Chrome 瀏覽器。');
             });
