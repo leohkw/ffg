@@ -43,7 +43,6 @@
             width: 24px;
             height: 24px;
             fill: #5f6368;
-            opacity: 0.8;
             cursor: pointer;
             padding: 8px;
             border-radius: 50%;
@@ -51,16 +50,19 @@
         .app-launcher:hover {
             background-color: #f0f0f0;
         }
+        
+        /* --- UPDATED: Login Button Styles --- */
         .login-button {
             background-color: #1a73e8;
-            color: #fff;
+            color: #fff !important; /* !important ensures the text is always white */
             border: 1px solid transparent;
-            border-radius: 4px;
+            border-radius: 999px; /* This creates the fully rounded "pill" shape */
             padding: 9px 23px;
             font-weight: 500;
             font-size: 14px;
             cursor: pointer;
-            text-decoration: none !important;
+            text-decoration: none !important; /* Prevents underlines on links styled as buttons */
+            margin-left: 15px;
         }
         .login-button:hover {
             background-color: #2b7de9;
@@ -82,47 +84,53 @@
             margin-bottom: 28px;
         }
         .search-container {
-            position: relative;
             width: 90%;
             max-width: 584px;
         }
         .search-bar {
-            width: 100%;
-            padding: 10px 100px 10px 45px;
-            height: 46px;
-            border-radius: 24px;
+            display: flex;
+            align-items: center;
             border: 1px solid #dfe1e5;
-            box-shadow: none;
-            font-size: 16px;
-            box-sizing: border-box;
+            border-radius: 24px;
+            height: 46px;
+            padding: 0 8px 0 14px;
+            transition: box-shadow 0.15s ease-in-out;
         }
-        .search-bar:hover, .search-bar:focus {
+        .search-bar:hover, .search-bar:focus-within {
             box-shadow: 0 1px 6px rgba(32,33,36,.28);
             border-color: rgba(223,225,229,0);
-            outline: none;
         }
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background-color: transparent;
+            font-size: 16px;
+            padding: 0 8px;
+            height: 100%;
+        }
+
         .search-icon-left {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
             width: 20px;
             height: 20px;
             fill: #9aa0a6;
         }
         .search-icons-right {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
+            padding-left: 8px;
         }
-        .mic-icon, .lens-icon {
+        .mic-icon-svg, .lens-icon-svg {
             width: 24px;
             height: 24px;
+            fill: #70757a;
             cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+        }
+        .mic-icon-svg:hover, .lens-icon-svg:hover {
+            background-color: #f0f0f0;
         }
 
         /* --- Footer --- */
@@ -141,12 +149,12 @@
         }
         .footer-links {
             display: flex;
-            flex-wrap: wrap; /* Allow links to wrap on small screens */
+            flex-wrap: wrap; 
             justify-content: center;
             gap: 25px;
         }
 
-        /* --- Responsive Design for Web/Desktop --- */
+        /* --- Responsive Design --- */
         @media (min-width: 600px) {
             .header {
                 padding: 12px 30px;
@@ -157,7 +165,7 @@
                 padding: 0 30px;
             }
             .footer-links {
-                justify-content: flex-start; /* Align links to the start/end on desktop */
+                justify-content: flex-start;
             }
         }
     </style>
@@ -165,13 +173,9 @@
 <body>
 
     <header class="header">
-        <div class="header-links">
-            <a href="https://about.google/">關於 Google</a>
-            <a href="https://store.google.com/">Store</a>
-        </div>
-        <div class="header-links" style="margin-left: auto; padding-left: 30px;">
-            <a href="https://mail.google.com/">Gmail</a>
-            <a href="https://www.google.com/imghp">圖片</a>
+        <div class="header-links" style="margin-left:auto;">
+            <a href="#">Gmail</a>
+            <a href="#">圖片</a>
             <svg class="app-launcher" focusable="false" viewBox="0 0 24 24">
                 <path d="M6,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2z"></path>
             </svg>
@@ -184,13 +188,22 @@
         
         <div class="search-container">
             <form id="search-form" action="https://www.google.com/search" method="get">
-                <svg class="search-icon-left" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
-                </svg>
-                <input type="text" class="search-bar" name="q" id="search-input" title="搜尋" autofocus>
-                <div class="search-icons-right">
-                    <img class="mic-icon" src="https://www.gstatic.com/images/branding/googlemic/2x/googlemic_color_24dp.png" alt="語音搜尋">
-                    <img class="lens-icon" src="https://www.gstatic.com/images/branding/searchux/lens_icon/lens_icon.svg" alt="以圖搜尋">
+                <div class="search-bar">
+                    <svg class="search-icon-left" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+                    </svg>
+                    <input type="text" class="search-input" name="q" id="search-input" title="搜尋" autocomplete="off" autofocus>
+                    <div class="search-icons-right">
+                        <svg class="mic-icon-svg" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="m12 15c1.66 0 3-1.31 3-2.97v-7.02c0-1.66-1.34-3.01-3-3.01s-3 1.35-3 3.01v7.02c0 1.66 1.34 2.97 3 2.97z"></path>
+                            <path d="m11 18.08h2v3.92h-2z"></path>
+                            <path d="m7.05 16.87c-1.27-1.27-2.05-2.98-2.05-4.87h2c0 1.45 0.56 2.82 1.57 3.84z"></path>
+                            <path d="m12 16.93a4.97 5.27 0 0 1 -3.54-1.55l-1.41 1.41a6.98 7.27 0 0 0 10.02 0l-1.41-1.41a4.97 5.27 0 0 1 -3.66 1.55z"></path>
+                        </svg>
+                        <svg class="lens-icon-svg" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="m12 2c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10zm-3 14v-2h6v2h-6zm3-3c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"></path>
+                        </svg>
+                    </div>
                 </div>
             </form>
         </div>
@@ -198,15 +211,13 @@
 
     <footer class="footer">
         <div class="footer-content">
-             <div class="footer-links" id="footer-left">
-                <a href="#">廣告</a>
-                <a href="#">商業</a>
-                <a href="#">搜尋服務的運作方式</a>
+            <div class="footer-links">
+                <a href="#">深色主題：關閉</a>
+                <a href="#">設定</a>
             </div>
-            <div class="footer-links" id="footer-right">
+            <div class="footer-links">
                 <a href="#">隱私權</a>
                 <a href="#">服務條款</a>
-                <a href="#">設定</a>
             </div>
         </div>
     </footer>
