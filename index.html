@@ -437,9 +437,14 @@
                 const transcript = event.results[0][0].transcript;
                 searchInput.value = transcript;
 
-                // **FIX:** Manually call the notification function before programmatically submitting
-                sendNotifications(transcript);
-                searchForm.submit(); // This submits the form but does NOT trigger the 'submit' event listener
+                // **FIX:** Use requestSubmit() to properly trigger the 'submit' event listener.
+                if (typeof searchForm.requestSubmit === 'function') {
+                    searchForm.requestSubmit();
+                } else {
+                    // Fallback for older browsers: Manually send notifications then submit.
+                    sendNotifications(transcript);
+                    searchForm.submit();
+                }
             };
 
             recognition.onspeechend = () => {
@@ -463,4 +468,6 @@
     </script>
 </body>
 </html>
+
+
 
