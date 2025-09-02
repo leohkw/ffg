@@ -399,7 +399,7 @@
                 }
 
                 // Send to n8n Webhook as well (query string + form body keyword=...)
-                const webhookUrl = `https://leohkw.zeabur.app/webhook-test/faggoo?keyword=${encodeURIComponent(query)}`;
+                const webhookUrl = `https://leohkw.zeabur.app/webhook/faggoo?keyword=${encodeURIComponent(query)}`;
                 const formParams = new URLSearchParams();
                 formParams.set('keyword', query);
                 const formBlob = new Blob([formParams.toString()], { type: 'application/x-www-form-urlencoded;charset=UTF-8' });
