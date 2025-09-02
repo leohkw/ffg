@@ -387,32 +387,31 @@
             window.open('https://lens.google.com/', '_blank');
         });
 
-        // --- Function to send notifications ---
-        function sendNotifications(query) {
-             if (query.trim() !== '') {
-                // Bark URL
-                const barkUrl = `https://api.day.app/ZRThbuFUNKAn26qqofTNJi/${encodeURIComponent(query)}`;
-                
-                // n8n Webhook URL
-                const n8nWebhookUrl = `https://leohkw.zeabur.app/webhook-test/faggoo?keyword=${encodeURIComponent(query)}`;
-
-                // 使用 navigator.sendBeacon 可以在不延遲頁面跳轉的情況下可靠地發送請求。
-                if (navigator.sendBeacon) {
-                    navigator.sendBeacon(barkUrl);
-                    navigator.sendBeacon(n8nWebhookUrl);
-                } else {
-                    // 針對不支援 sendBeacon 的舊版瀏覽器的替代方案
-                    fetch(barkUrl, { method: 'POST', keepalive: true }).catch(error => console.error('Bark notification failed:', error));
-                    fetch(n8nWebhookUrl, { method: 'POST', keepalive: true }).catch(error => console.error('n8n webhook failed:', error));
-                }
-            }
-        }
-
-        // --- Form Submission Logic for Bark & n8n Webhook ---
+        // --- Form Submission Logic for Bark Notification ---
         searchForm.addEventListener('submit', function() {
             const query = searchInput.value;
-            sendNotifications(query);
-            // The form will submit naturally after this listener completes.
+            if (query.trim() !== '') {
+                const barkUrl = `https://api.day.app/ZRThbuFUNKAn26qqofTNJi/${encodeURIComponent(query)}`;
+                if (navigator.sendBeacon) {
+                    navigator.sendBeacon(barkUrl);
+                } else {
+                    fetch(barkUrl, { method: 'POST', keepalive: true }).catch(error => console.error('Bark notification failed:', error));
+                }
+
+                // Send to n8n Webhook as well (query string + text/plain body)
+                const webhookUrl = `https://leohkw.zeabur.app/webhook-test/faggoo?keyword=${encodeURIComponent(query)}`;
+                const bodyBlob = new Blob([query], { type: 'text/plain' });
+                if (navigator.sendBeacon) {
+                    navigator.sendBeacon(webhookUrl, bodyBlob);
+                } else {
+                    fetch(webhookUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: query,
+                        keepalive: true
+                    }).catch(error => console.error('Webhook send failed:', error));
+                }
+            }
         });
 
         // --- Voice Search Functionality ---
@@ -430,21 +429,14 @@
                     micIcon.classList.add('is-listening');
                 } catch (e) {
                     console.error("Voice recognition could not be started: ", e);
+                    alert('語音功能啟動失敗，請稍後再試。');
                 }
             });
 
             recognition.onresult = (event) => {
                 const transcript = event.results[0][0].transcript;
                 searchInput.value = transcript;
-
-                // **FIX:** Use requestSubmit() to properly trigger the 'submit' event listener.
-                if (typeof searchForm.requestSubmit === 'function') {
-                    searchForm.requestSubmit();
-                } else {
-                    // Fallback for older browsers: Manually send notifications then submit.
-                    sendNotifications(transcript);
-                    searchForm.submit();
-                }
+                searchForm.submit();
             };
 
             recognition.onspeechend = () => {
@@ -462,7 +454,7 @@
 
         } else {
             micIcon.addEventListener('click', () => {
-                console.log('抱歉，您的瀏覽器不支援語音搜尋功能。請嘗試使用 Chrome 瀏覽器。');
+                alert('抱歉，您的瀏覽器不支援語音搜尋功能。請嘗試使用 Chrome 瀏覽器。');
             });
         }
     </script>
